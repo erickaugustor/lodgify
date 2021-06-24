@@ -1,24 +1,48 @@
-import logo from './logo.svg';
-import './App.css';
+import React from 'react';
 
-function App() {
+import {
+  Grid,
+  LinearProgress,
+} from '@material-ui/core';
+import Alert from '@material-ui/lab/Alert';
+
+import HouseCard from './components/HouseCard';
+
+import useHouseFetch from './hooks/useHouseFetch';
+
+const App = () => {
+  const { status, data: cards } = useHouseFetch();
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <main>
+      <Grid container spacing={2}>
+        {
+          (status === 'fetching') && (
+            <Grid item xs={12}>
+              <LinearProgress />
+            </Grid>
+          )
+        }
+
+        {
+          (status === 'fetched') && (
+            cards.map(card => (
+              <Grid item xs={12} md={3}>
+                <HouseCard key={card.id} card={card} />
+              </Grid>
+            ))
+          )
+        }
+
+        {
+          (status === 'error') && (
+            <Alert severity="error">
+              Somethin went wrong!
+            </Alert>
+          )
+        }
+      </Grid>
+    </main>
   );
 }
 
